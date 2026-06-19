@@ -1,0 +1,77 @@
+================================================================================
+  AGROVISION AI — COMPREHENSIVE PROJECT SUMMARY
+================================================================================
+
+1. PROJECT OVERVIEW
+------------------
+AgroVision AI is an offline-first mobile application built with Flutter that 
+uses a dual-backbone CNN (EfficientNetB0 + MobileNetV2) to detect 38 plant 
+diseases across 14 crops with 98.3% accuracy. It features a multilingual UI 
+with Voice (TTS) support to assist farmers regardless of connectivity.
+
+2. FEATURE-TO-CODE MAPPING (WHICH CODE DOES WHAT)
+-------------------------------------------------
+
+A. MACHINE LEARNING & INFERENCE
+   - Model File: `assets/model/final_model_float16.tflite`
+     The 14.8MB quantized AI model.
+   - Core Logic: `lib/services/tflite_service.dart`
+     Handles model loading, image pre-processing (224x224 resizing, 
+     normalization to [-1, 1]), and running the TFLite interpreter.
+   - Class Mapping: `lib/data/class_names.dart`
+     Contains the ordered list of 38 disease classes for argmax mapping.
+
+B. IMAGE QUALITY GATEWAY
+   - Logic: `lib/services/image_quality_service.dart`
+     Performs pre-inference checks:
+     * Blur detection (Laplacian variance).
+     * Brightness/Exposure checks.
+     * Leaf detection using HSV color space analysis.
+
+C. MULTILINGUAL & VOICE (TTS)
+   - UI Strings: `lib/l10n/app_strings.dart`
+     Contains translations for English, Kannada, Hindi, Tamil, and Telugu.
+   - State Management: `lib/services/locale_service.dart`
+     A ChangeNotifier that manages the current language and triggers 
+     instant UI updates across the app.
+   - Voice Engine: `lib/services/tts_service.dart`
+     Interfaces with `flutter_tts` to read disease results in the selected language.
+
+D. DATA PERSISTENCE
+   - Scan History: `lib/services/history_service.dart`
+     Uses Hive (NoSQL) for fast local storage of scan results and image paths.
+   - Disease Database: `lib/services/database_service.dart`
+     Manages a local SQLite database that stores detailed treatment info 
+     (symptoms, causes, remedies) seeded from `lib/data/disease_data.dart`.
+
+E. USER INTERFACE (SCREENS)
+   - Entry Point: `lib/main.dart` & `lib/app.dart`
+     Initializes services and sets up the Material 3 theme.
+   - Shell: `lib/screens/main_shell.dart`
+     Manages the bottom navigation between the 5 main screens.
+   - Scanning: `lib/screens/scan_screen.dart`
+     UI for Camera/Gallery interaction and the "Analyzing" animation.
+   - Results: `lib/screens/result_screen.dart`
+     Displays the prediction, confidence bar, and detailed treatment tabs.
+   - Library: `lib/screens/disease_library_screen.dart`
+     A searchable catalog of all supported diseases.
+
+3. TECHNICAL SPECIFICATIONS
+---------------------------
+- Framework: Flutter 3.41 / Dart 3.11
+- AI Architecture: Dual-Backbone (EfficientNetB0 + MobileNetV2)
+- Training: Kaggle (T4 GPU), Two-phase transfer learning
+- Accuracy: 98.3% (Test Set)
+- Quantization: Float16 (reduces size from 50MB to 14.8MB)
+- Inference Time: 300ms - 500ms on-device.
+
+4. KEY INNOVATIONS
+------------------
+- Offline Inference: No internet required for diagnosis.
+- Parallel Feature Extraction: Dual-backbone improves robustness.
+- Quality Guard: Rejects bad photos to minimize AI "hallucinations."
+- Inclusivity: Kannada, Hindi, Tamil, and Telugu support with TTS.
+
+================================================================================
+Generated on: Friday, 22 May 2026
+================================================================================

@@ -1,0 +1,115 @@
+<svg width="860" height="760" viewBox="0 0 860 760" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI',Arial,Helvetica,sans-serif">
+
+  <defs>
+    <marker id="da" markerWidth="9" markerHeight="7" refX="8" refY="3.5" orient="auto">
+      <polygon points="0 0,9 3.5,0 7" fill="#546E7A"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="860" height="760" fill="#F5F6FA"/>
+
+  <!-- ═══ HEADER ═══ -->
+  <rect x="0" y="0" width="860" height="60" fill="#1A237E"/>
+  <text x="430" y="24" text-anchor="middle" fill="white" font-size="17" font-weight="bold">AgroVision AI — CNN Model Architecture</text>
+  <text x="430" y="46" text-anchor="middle" fill="#9FA8DA" font-size="12">EfficientNetB0 + MobileNetV2 Dual-Backbone  ·  38-Class Plant Disease Classifier</text>
+
+  <!-- ─── INPUT ─── -->
+  <rect x="255" y="78" width="350" height="52" rx="10" fill="#E3F2FD" stroke="#1565C0" stroke-width="2"/>
+  <text x="430" y="101" text-anchor="middle" fill="#0D47A1" font-size="14" font-weight="bold">Input Image</text>
+  <text x="430" y="120" text-anchor="middle" fill="#1565C0" font-size="12">224 × 224 × 3  (RGB pixels, normalized to [−1, +1])</text>
+
+  <!-- Arrow down, splits into two -->
+  <line x1="430" y1="130" x2="430" y2="148" stroke="#546E7A" stroke-width="1.5"/>
+  <line x1="200" y1="148" x2="660" y2="148" stroke="#546E7A" stroke-width="1.5"/>
+  <line x1="200" y1="148" x2="200" y2="166" stroke="#546E7A" stroke-width="1.5" marker-end="url(#da)"/>
+  <line x1="660" y1="148" x2="660" y2="166" stroke="#546E7A" stroke-width="1.5" marker-end="url(#da)"/>
+
+  <!-- ─── BACKBONE 1: EfficientNetB0 ─── -->
+  <rect x="40" y="168" width="320" height="148" rx="10" fill="white" stroke="#2E7D32" stroke-width="2"/>
+  <rect x="40" y="168" width="320" height="32" rx="10" fill="#2E7D32"/>
+  <rect x="40" y="186" width="320" height="14" fill="#2E7D32"/>
+  <text x="200" y="190" text-anchor="middle" fill="white" font-size="13" font-weight="bold">EfficientNetB0</text>
+  <text x="200" y="222" text-anchor="middle" fill="#388E3C" font-size="12" font-weight="bold">Backbone 1 · ImageNet Pretrained</text>
+  <line x1="55" y1="230" x2="345" y2="230" stroke="#C8E6C9" stroke-width="1"/>
+  <text x="200" y="250" text-anchor="middle" fill="#2E7D32" font-size="12">Stem Conv 3×3</text>
+  <text x="200" y="268" text-anchor="middle" fill="#2E7D32" font-size="12">16× MBConv Blocks (compound scaled)</text>
+  <text x="200" y="286" text-anchor="middle" fill="#1B5E20" font-size="11">5.3 Million Parameters</text>
+  <rect x="100" y="295" width="200" height="14" rx="7" fill="#E8F5E9" stroke="#43A047" stroke-width="1"/>
+  <text x="200" y="306" text-anchor="middle" fill="#1B5E20" font-size="10" font-weight="bold">Global Average Pooling  →  1,280 features</text>
+
+  <!-- ─── BACKBONE 2: MobileNetV2 ─── -->
+  <rect x="500" y="168" width="320" height="148" rx="10" fill="white" stroke="#6A1B9A" stroke-width="2"/>
+  <rect x="500" y="168" width="320" height="32" rx="10" fill="#6A1B9A"/>
+  <rect x="500" y="186" width="320" height="14" fill="#6A1B9A"/>
+  <text x="660" y="190" text-anchor="middle" fill="white" font-size="13" font-weight="bold">MobileNetV2</text>
+  <text x="660" y="222" text-anchor="middle" fill="#7B1FA2" font-size="12" font-weight="bold">Backbone 2 · ImageNet Pretrained</text>
+  <line x1="515" y1="230" x2="805" y2="230" stroke="#E1BEE7" stroke-width="1"/>
+  <text x="660" y="250" text-anchor="middle" fill="#7B1FA2" font-size="12">Stem Conv 3×3</text>
+  <text x="660" y="268" text-anchor="middle" fill="#7B1FA2" font-size="12">17× Inverted Residual Blocks</text>
+  <text x="660" y="286" text-anchor="middle" fill="#4A148C" font-size="11">3.4 Million Parameters</text>
+  <rect x="560" y="295" width="200" height="14" rx="7" fill="#F3E5F5" stroke="#8E24AA" stroke-width="1"/>
+  <text x="660" y="306" text-anchor="middle" fill="#4A148C" font-size="10" font-weight="bold">Global Average Pooling  →  1,280 features</text>
+
+  <!-- Merge arrows -->
+  <line x1="200" y1="316" x2="200" y2="348" stroke="#546E7A" stroke-width="1.5"/>
+  <line x1="660" y1="316" x2="660" y2="348" stroke="#546E7A" stroke-width="1.5"/>
+  <line x1="200" y1="348" x2="660" y2="348" stroke="#546E7A" stroke-width="1.5"/>
+  <line x1="430" y1="348" x2="430" y2="366" stroke="#546E7A" stroke-width="1.5" marker-end="url(#da)"/>
+
+  <!-- ─── CONCATENATE ─── -->
+  <rect x="230" y="368" width="400" height="44" rx="10" fill="#FFF3E0" stroke="#E65100" stroke-width="2"/>
+  <text x="430" y="387" text-anchor="middle" fill="#BF360C" font-size="13" font-weight="bold">Concatenate</text>
+  <text x="430" y="404" text-anchor="middle" fill="#E65100" font-size="12">1,280 + 1,280 = 2,560  combined feature vector</text>
+
+  <!-- Arrow -->
+  <line x1="430" y1="412" x2="430" y2="430" stroke="#546E7A" stroke-width="1.5" marker-end="url(#da)"/>
+
+  <!-- ─── CLASSIFICATION HEAD ─── -->
+  <rect x="155" y="432" width="550" height="224" rx="10" fill="white" stroke="#37474F" stroke-width="1.5"/>
+  <rect x="155" y="432" width="550" height="28" rx="10" fill="#37474F"/>
+  <rect x="155" y="447" width="550" height="13" fill="#37474F"/>
+  <text x="430" y="451" text-anchor="middle" fill="white" font-size="12" font-weight="bold">Classification Head  (trained from scratch)</text>
+
+  <!-- BN -->
+  <rect x="240" y="472" width="380" height="36" rx="8" fill="#ECEFF1" stroke="#78909C" stroke-width="1.5"/>
+  <text x="430" y="487" text-anchor="middle" fill="#37474F" font-size="12" font-weight="bold">Batch Normalization</text>
+  <text x="430" y="502" text-anchor="middle" fill="#607D8B" font-size="11">Stabilizes training  ·  Reduces internal covariate shift</text>
+
+  <!-- Arrow -->
+  <line x1="430" y1="508" x2="430" y2="520" stroke="#78909C" stroke-width="1.5" marker-end="url(#da)"/>
+
+  <!-- Dense 512 -->
+  <rect x="240" y="522" width="380" height="36" rx="8" fill="#E8F5E9" stroke="#43A047" stroke-width="1.5"/>
+  <text x="430" y="537" text-anchor="middle" fill="#1B5E20" font-size="12" font-weight="bold">Dense  512  ·  ReLU activation</text>
+  <text x="430" y="552" text-anchor="middle" fill="#388E3C" font-size="11">Dropout 0.4  (prevents overfitting)</text>
+
+  <!-- Arrow -->
+  <line x1="430" y1="558" x2="430" y2="570" stroke="#78909C" stroke-width="1.5" marker-end="url(#da)"/>
+
+  <!-- Dense 256 -->
+  <rect x="240" y="572" width="380" height="36" rx="8" fill="#E8F5E9" stroke="#388E3C" stroke-width="1.5"/>
+  <text x="430" y="587" text-anchor="middle" fill="#1B5E20" font-size="12" font-weight="bold">Dense  256  ·  ReLU activation</text>
+  <text x="430" y="602" text-anchor="middle" fill="#388E3C" font-size="11">Dropout 0.3  (prevents overfitting)</text>
+
+  <!-- Arrow -->
+  <line x1="430" y1="608" x2="430" y2="620" stroke="#78909C" stroke-width="1.5" marker-end="url(#da)"/>
+
+  <!-- Output Dense 38 -->
+  <rect x="240" y="622" width="380" height="28" rx="8" fill="#EDE7F6" stroke="#5E35B1" stroke-width="1.5"/>
+  <text x="430" y="641" text-anchor="middle" fill="#311B92" font-size="12" font-weight="bold">Dense  38  ·  Softmax  →  Probability for each class</text>
+
+  <!-- Arrow -->
+  <line x1="430" y1="656" x2="430" y2="672" stroke="#546E7A" stroke-width="1.5" marker-end="url(#da)"/>
+
+  <!-- ─── OUTPUT ─── -->
+  <rect x="180" y="674" width="500" height="58" rx="10" fill="#1A237E" stroke="#283593" stroke-width="2"/>
+  <text x="430" y="698" text-anchor="middle" fill="white" font-size="14" font-weight="bold">Predicted Disease Class  +  Confidence Score</text>
+  <text x="430" y="718" text-anchor="middle" fill="#9FA8DA" font-size="12">e.g.  Tomato___Late_blight  ·  94.7%  ·  Severity: Severe</text>
+
+  <!-- Note bottom -->
+  <text x="430" y="748" text-anchor="middle" fill="#90A4AE" font-size="10">
+    Training: Phase 1 — Frozen backbones, 8 epochs, Adam lr=1e-3  ·  Phase 2 — Top-20 layers unfrozen, 4 epochs, Adam lr=5e-5  ·  Test accuracy ≈ 98.3%
+  </text>
+
+</svg>

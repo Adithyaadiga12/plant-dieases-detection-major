@@ -1,0 +1,85 @@
+================================================================================
+  AGROVISION AI — ARCHITECTURAL & FUNCTIONAL DEEP DIVE
+================================================================================
+
+1. CORE AI ARCHITECTURE (The Brain)
+----------------------------------
+The application employs a custom "Ensemble-Style" Convolutional Neural Network.
+
+A. DUAL-BACKBONE DESIGN
+   - Backbone 1 (EfficientNetB0): Focused on high-precision compound-scaled
+     features. Optimized for accuracy via depth, width, and resolution scaling.
+   - Backbone 2 (MobileNetV2): Optimized for low-latency mobile performance
+     using inverted residual blocks and depthwise separable convolutions.
+   - Fusion: The 1,280 feature vectors from both backbones are concatenated into 
+     a 2,560-length vector before passing to a multi-stage classification head 
+     (Dense 512 → Dropout 40% → Dense 256 → Dropout 30% → Softmax 38).
+
+B. OPTIMIZED INFERENCE (lib/services/tflite_service.dart)
+   - Grey-World White Balance: Automatically corrects color casts from various 
+     lighting conditions (sunlight vs. shade) before the image hits the model.
+   - Adaptive TTA (Test-Time Augmentation): If a prediction's confidence is 
+     below 80%, the app mirrors the image horizontally and averages the 
+     probabilities of both passes. This "second opinion" consistently 
+     stabilizes borderline results.
+   - Quantization: The model is stored in Float16 format (14.8 MB), striking 
+     the perfect balance between file size and floating-point precision.
+
+2. INTELLIGENT QUALITY GATE (lib/services/image_quality_service.dart)
+-------------------------------------------------------------------
+To prevent the "garbage-in, garbage-out" problem common in AI, the app 
+executes 5 surgical checks before inference:
+
+   - Blur Check: Uses Laplacian variance (Threshold: 7.0). Rejects shaky photos.
+   - Exposure Check: Monitors average pixel brightness (Range: 20–245). 
+     Rejects total darkness or heavy lens flare.
+   - Leaf Detection (HSV): Filters pixels based on Hue (60-165° for Green, 
+     25-70° for Disease Brown). Rejects non-plant objects.
+   - Texture Validation: Measures brightness standard deviation on leaf 
+     pixels (Threshold: 0.032). This distinguishes real leaves from solid 
+     green plastic or fabric.
+
+3. DATA & PERSISTENCE LAYERS
+----------------------------
+The app uses a hybrid storage strategy for maximum performance:
+
+   - SQLITE (lib/services/database_service.dart):
+     Stores the "Disease Treatment Encyclopedia." Handles complex relations 
+     between disease names, symptoms, and localized remedies. Seeding is done 
+     at first launch from a local dataset.
+   - HIVE (lib/services/history_service.dart):
+     A high-speed NoSQL key-value store used for the Scan History. It allows 
+     near-instantaneous loading of previous scan images and metadata.
+
+4. MULTILINGUAL & ACCESSIBILITY (lib/services/locale_service.dart)
+------------------------------------------------------------------
+   - Dynamic Rebuilds: Uses a Singleton ChangeNotifier. When a farmer changes 
+     the language (Kannada, Hindi, Tamil, Telugu), the entire widget tree 
+     rebuilds instantly via a ListenableBuilder in `app.dart`.
+   - Voice Integration (`tts_service.dart`): Integrates with native OS engines 
+     to read results aloud. It handles specific locale codes (e.g., `kn-IN`, 
+     `hi-IN`) and provides custom phrase templates for each language.
+
+5. USER WORKFLOW (lib/screens/)
+------------------------------
+   - Scan Screen: Orchestrates permissions (Camera/Gallery), runs the 
+     Quality Gate, and manages the "Analyzing" state with a pulse animation.
+   - Result Screen: Implements a "Severity Classification" logic:
+     * Confidence > 90% → Severe (Red)
+     * Confidence 75-90% → Moderate (Orange)
+     * Confidence < 75% → Mild (Light Green)
+     * Healthy → Healthy (Green)
+   - Disease Library: A full-text searchable catalog that allows farmers 
+     to browse diseases even without taking a photo.
+
+6. PROJECT STACK SUMMARY
+------------------------
+- Frontend: Flutter (Material 3)
+- ML Engine: TFLite (On-device)
+- Image Processing: Dart 'image' package (Cubic interpolation, EXIF baking)
+- Database: Hive (NoSQL) & SQLite
+- Localization: Custom JSON-mapped LocaleService
+
+================================================================================
+Document generated to provide technical clarity for AgroVision AI.
+================================================================================
