@@ -47,6 +47,16 @@ app.*.map.json
 # Claude Code session data
 .claude/
 
+# Junk / personal files
+*.pdf
+APP_SUMMARY.txt
+DETAILED_APP_SUMMARY.txt
+PROJECT_DESCRIPTION.txt
+DIAGRAMS.md
+diagram_*.svg
+manifest.csv
+convert_error.log
+
 # Loose test/sample images at project root
 *.JPG
 *.jpg
