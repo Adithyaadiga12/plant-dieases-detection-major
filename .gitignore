@@ -46,3 +46,14 @@ app.*.map.json
 
 # Claude Code session data
 .claude/
+
+# Loose test/sample images at project root
+*.JPG
+*.jpg
+*.jpeg
+*.png
+!assets/
+!web/
+!ios/
+!macos/
+!android/
